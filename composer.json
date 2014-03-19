@@ -1,0 +1,17 @@
+{
+    "name": "inli3u/witango-lib",
+    "description": "PHP port of Witango's standard library.",
+    "keywords": ["witango"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alex Dunn",
+            "email": "inli3u@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "Witangone": "src/"
+        }
+    }
+}
