@@ -197,7 +197,7 @@ class WitangoLib
      * values specified by the configuration variables cDelim and rDelim are 
      * used as defaults.
      */
-    public static function array($rows = null, $cols = null, $value = null, $cdelim = ',', $rdelim = ';')
+    public static function makearray($rows = null, $cols = null, $value = null, $cdelim = ',', $rdelim = ';')
     {
         if (!strlen($value)) {
             // Build array from ROWS and COLS.
@@ -381,6 +381,172 @@ class WitangoLib
         } else {
             $values[$key] = $value;
         }
+    }
+
+    /**
+     * <@CHOICELIST NAME=inputname TYPE=select|radio 
+     * OPTIONS=optionsarray [SIZE=size] [MULTIPLE=yes|no] 
+     * [CLASS=classname] [STYLE=stylename] [onBlur=script] 
+     * [onClick=script] [onFocus=script] [VALUES=valuesarray] 
+     * [SELECTED=selectedarray] [SELECTEXTRAS=selectattributes] 
+     * [OPTIONEXTRAS=optionattributes] [TABLEEXTRAS=tableattributes] 
+     * [TREXTRAS=trattributes] [TDEXTRAS=tdattributes] 
+     * [LABELPREFIX=prefix] [LABELSUFFIX=suffix] [COLUMNS=number] 
+     * [ROWS=number] [ORDER=columns|rows] [ENCODING=encoding]> 
+     *
+     * Description <@CHOICELIST> allows you to easily create HTML selection list boxes, 
+     * pop-up menus/drop-down lists, and radio button clusters using data from 
+     * variables, database values, and so on.
+     * This meta tag accepts all the attributes of the standard HTML <SELECT> 
+     * tag and of the <INPUT TYPE=radio> tags. It also accepts additional 
+     * attributes for specifying the values in the list and the selected item(s). 
+     * Radio button groups are always formatted as a table, and an additional 
+     * series of attributes defines how the radio button group table is to be 
+     * formatted. 
+     * The TYPE attribute defines the type of choice list to create. This is one of 
+     * SELECT or RADIO (which can be abbreviated as S and R). SELECT is the 
+     * default if nothing is specified.
+     * 
+     * The OPTIONS attribute specifies an array of option names to appear in 
+     * the selection list or radio button group. The array may have either a 
+     * single column (one option name in each row) or a single row (one option 
+     * name in each column). 
+     * The VALUES attribute defines an optional array of option values. If 
+     * specified, the size of the array must match the one specified in the 
+     * OPTIONS attribute. Each array element becomes the value for its 
+     * corresponding element in the OPTIONS array. If this attribute is not 
+     * specified, the value for each option is the same as its name. 
+     * The SELECTED attribute defines a single value or an array of values to be 
+     * selected in the list. The value(s) must match items appearing in the 
+     * VALUES attribute, if specified, or the OPTIONS attribute if VALUES is not 
+     * specified. Items in this array are selected in the displayed selection list or 
+     * radio button group. 
+     * The OPTIONEXTRAS attribute can be used to set additional <OPTION> 
+     * tag attributes or <INPUT TYPE=radio> tag attributes. The value of this 
+     * attribute is placed without parsing in the HTML <OPTION> tag or 
+     * <INPUT TYPE=radio> tag. For example, 
+     * OPTIONEXTRAS='CLASS="fred"' adds the CLASS="fred" attribute 
+     * to each <OPTION> tag or <INPUT TYPE=radio> tag.
+     * The following attributes apply only to lists:
+     *
+     * • The SIZE attribute specifies the number of rows in the list that 
+     * should be visible at the same time.
+     * • The MULTIPLE attribute allows multiple selections. 
+     * • The SELECTEXTRAS attribute can be used to set additional 
+     * <SELECT> tag attributes. The value of this attribute is placed without 
+     * parsing in the HTML <SELECT> tag. For example, 
+     * EXTRAS='ID="alpha"' adds the ID="alpha" attribute to the 
+     * <SELECT> tag.
+     * The following attributes apply only to radio button groups:
+     * • The TABLEEXTRAS attribute sets a value that is added to the TABLE 
+     * tag for the radio cluster.
+     * onFocus The onFocus event occurs when an element receives focus either by 
+     * the pointing device or by tabbing navigation. 
+     * onClick The onClick event occurs when the pointing device button is clicked 
+     * over an element. 
+     * STYLE This attribute specifies style information for the current element. 
+     * Attribute Definition<@CHOICELIST>
+     * 126 126
+     * • The TREXTRAS attribute sets a value that is added to each TR tag for 
+     * the radio cluster.
+     * • The TDEXTRAS attribute sets a value that is added to each TD tag for 
+     * the radio cluster.
+     * • The LABELPREFIX attribute sets a value that is prefixed to each 
+     * radio button label.
+     * • The LABELSUFFIX attribute sets a value that is appended to each 
+     * radio button label.
+     * • The COLUMNS attribute sets the number of columns of radio buttons 
+     * in a radio cluster. If COLUMNS is specified, ROWS is ignored. If neither 
+     * ROWS nor COLUMNS is specified, then a single-column cluster is 
+     * created.
+     * • The ROWS attribute sets the number of rows of radio buttons in a 
+     * radio cluster. If COLUMNS is specified, this attribute is ignored. 
+     * • The ORDER attribute sets the direction in which the options are 
+     * displayed. This attribute has two possible values: COLUMNS means 
+     * each column (left to right) is filled first; ROWS means each row (top to 
+     * bottom) is filled first. COLUMNS is the default value of this attribute. 
+     * This attribute is used only if more than one column or row is 
+     * generated.
+     * 
+     * The ENCODING attribute works slightly differently for the 
+     * <@CHOICELIST> meta tag: the default encoding for this meta tag is NONE; 
+     * that is, no escaping of special characters is done for the result of the meta 
+     * tag; however, this tag does do encoding (always) as part of its normal 
+     * operation; that is, any special characters within the arrays that define the 
+     * options list are escaped for HTML. For example, if you specified a list of 
+     * operators in the options list (= [equals];< [less than];> [greater than]), the 
+     * characters that have special meaning within HTML (the less-than and 
+     * greater-than characters) would be encoded as &lt; and &gt;, which are 
+     * special HTML escape sequences. This appears correctly in a Web 
+     * browser; that is, as “<” and “>”.
+     *
+     * @param $name     Input name
+     * @param $type     select|radio
+     * @param $options  Array of options
+     * @param $params   All additional options
+     */
+    public static function choicelist($name, $options, $values = null, $params = null)
+    {
+        if (!is_array($options)) {
+            $options = [];
+        }
+        if (!is_array($values)) {
+            $values = $options;
+        }
+        if (!is_array($params)) {
+            $params = [];
+        }
+
+        $defaults = [
+            'type' => 'select', // Values: select|radio
+            'size' => null,
+            'multiple' => 'no', // Values: yes|no
+            'class' => '',
+            'style' => '',
+            'onblur' => '',
+            'onclick' => '',
+            'onfocus' => '',
+            'selected' => null, // Array of selected items.
+            'selectedextras' => '', // String containing extra attributes for select element.
+            'optionextras' => '', // String containing exter attributes for option elements.
+            'tableextras' => '', // String containing extra attributes for table element (for radio type).
+            'trextras' => '', // String containing extra attributes for TR elements (for radio type).
+            'tdextras' => '', // String containing extra attributes for TD elements (for radio type).
+            'labelprefix' => '', // For radio button labels.
+            'labelsuffix' => '', // For radio button labels.
+            'columns' => null, // Number of columns of radio buttons in a radio cluster.
+            'rows' => null, // Number of rows of radio buttons in a radio cluster.
+            'order' => 'columns', // Columns first or rows first.
+        ];
+
+        $params = array_merge($defaults, $params);
+        $lines = [];
+        $selected = [];
+        $attrs = [];
+        $attrs['name'] = $name;
+        if ($params['size']) $attrs['size'] = (int)$params['size'];
+        if ($params['multiple'] == 'yes') $attrs['multiple'] = 'multiple';
+        if ($params['class'] != '') $attrs['class'] = $params['class'];
+        if ($params['style'] != '') $attrs['style'] = $params['style'];
+        if ($params['onblur'] != '') $attrs['onblur'] = $params['onblur'];
+        if ($params['onclick'] != '') $attrs['onclick'] = $params['onclick'];
+        if ($params['onfocus'] != '') $attrs['onfocus'] = $params['onfocus'];
+        if ($params['selected'] !== null) $selected = is_array($params['selected']) ? $params['selected'] : [$params['selected']];
+        if ($params[''] != '') $attrs[''] = $params[''];
+
+        $lines[] = '<select>';
+        for ($i = 0; $i < count($options); $i++) {
+            $lines[] = '<option></option>';
+        }
+        $lines[] = '</select>';
+
+        return implode("\n", $lines);
+    }
+
+    private static function render_attributes($attrs)
+    {
+        $parts = [];
+        
     }
 
     /**
