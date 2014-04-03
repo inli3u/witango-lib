@@ -570,6 +570,7 @@ class WitangoLib
      */
     public static function datediff($date1, $date2, $format = '')
     {
+        error_log('WitangoLib::datediff - not implemented yet.');
     }
 
     /**
@@ -705,6 +706,8 @@ class WitangoLib
      */
     public static function sort($array, $cols = '')
     {
+        error_log('WitangoLib::sort - not implemented yet');
+        return $array;
     }
 
     /**
@@ -731,5 +734,40 @@ class WitangoLib
         case 'size':
             throw new Exception('ws_varinfo: size attribute not implemented.');
         }
+    }
+
+    /**
+     * Containment. Returns true if specified string or number is contained in the array
+     * Occurrence. Returns true if specified string or number is a substring of the source string.
+     */
+    public static function contains($haystack, $needle)
+    {
+        if (is_array($haystack)) {
+            return in_array($needle, $haystack);
+        } else {
+            return false !== strpos($haystack, $needle);
+        }
+    }
+
+    /**
+     * Occurrence. Returns true if specified string or number begins the source string. (Case-insensitive.)
+     */
+    public static function beginswith($haystack, $needle)
+    {
+        return strtolower(substr($haystack, 0, strlen($needle))) === strtolower($needle);
+    }
+
+    /**
+     * Occurrence. Returns true if specified string or number ends the source string. (Case-insensitive.)
+     */
+    public static function endswith($haystack, $needle)
+    {
+        return strtolower(substr($haystack, -strlen($needle))) === strtolower($needle);
+    }
+
+    public function encoding($value, $encoding)
+    {
+        error_log('WitangoLib::encoding - not implemented yet.');
+        return $value;
     }
 }
